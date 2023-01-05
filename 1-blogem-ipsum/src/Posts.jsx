@@ -15,9 +15,11 @@ export function Posts() {
     const [currentPage, setCurrentPage] = useState(0);
     const [selectedPost, setSelectedPost] = useState(null);
 
-    const { data } = useQuery('posts', fetchPosts);
+    const { data, isError, isLoading } = useQuery('posts', fetchPosts);
 
-    if (!data) return <div />;
+    if (isLoading) return <h3>Loading...</h3>;
+    if (isError) return <h3>Network error</h3>; // 3 attemps by default before it goes isError
+    if (!data) return <h3>Something went really wrong</h3>;
 
     return (
         <>
