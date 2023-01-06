@@ -15,7 +15,12 @@ export function Posts() {
     const [currentPage, setCurrentPage] = useState(0);
     const [selectedPost, setSelectedPost] = useState(null);
 
-    const { data, isError, isLoading } = useQuery('posts', fetchPosts);
+    const { data, isError, isLoading } = useQuery('posts', fetchPosts, {
+        staleTime: 5 * 60 * 1000, // after staleTime lapses data will be refetched if the window regains focus
+        // cacheTime is a period of time after which cache data is garbage
+        // collected. you can use cached data to display while most relevant
+        // data is fetching
+    });
 
     if (isLoading) return <h3>Loading...</h3>;
     if (isError) return <h3>Network error</h3>; // 3 attemps by default before it goes isError
