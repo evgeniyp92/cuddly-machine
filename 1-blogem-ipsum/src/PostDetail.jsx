@@ -1,4 +1,4 @@
-import { useQuery } from 'react-query';
+import { useQuery, useMutation } from 'react-query';
 
 async function fetchComments(postId) {
   const response = await fetch(
@@ -29,8 +29,15 @@ export function PostDetail({ post }) {
     [`comments`, post.id],
     () => fetchComments(post.id)
   );
-
   // you can also use unique keys for queries
+
+  const handleDelete = useMutation(postId => {
+    deletePost(postId);
+  });
+
+  const handleUpdate = useMutation(postId => {
+    updatePost(postId);
+  });
 
   if (isLoading) return <h3>Loading...</h3>;
   if (isError) return <h3>Network error</h3>;
@@ -39,7 +46,14 @@ export function PostDetail({ post }) {
   return (
     <>
       <h3 style={{ color: 'blue' }}>{post.title}</h3>
-      <button>Delete</button> <button>Update title</button>
+      <button onClick={() => handleDelete.mutate(post.id)}>Delete</button>
+      {handleDelete.isLoading && <p>deleting post...</p>}
+      {handleDelete.isSuccess && <p>Post 'deleted'!</p>}
+      {handleDelete.isError && <p>ERROR deleting post</p>}
+      <button onClick={() => handleUpdate.mutate(post.id)}>Update title</button>
+      {handleUpdate.isLoading && <p>updating post...</p>}
+      {handleUpdate.isSuccess && <p>Post 'updated'!</p>}
+      {handleUpdate.isError && <p>ERROR updating post</p>}
       <p>{post.body}</p>
       <h4>Comments</h4>
       {data.map(comment => (
