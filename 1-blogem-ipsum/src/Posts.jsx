@@ -35,6 +35,8 @@ export function Posts() {
     }
   );
 
+  //   isLoading is true if data is being fetched and there is no cache to show
+  //   isFetching is true if data is being fetched BUT there's cached data to show
   if (isLoading) return <h3>Loading...</h3>;
   if (isError) return <h3>Network error</h3>; // 3 attemps by default before it goes isError
   if (!data) return <h3>Something went really wrong</h3>;
