@@ -1,8 +1,7 @@
-import { useState } from 'react';
-import { useQuery } from 'react-query';
+import { useState, useEffect } from 'react';
+import { useQuery, useQueryClient } from 'react-query';
 
 import { PostDetail } from './PostDetail';
-const maxPostPage = 10;
 
 async function fetchPosts(page) {
   const response = await fetch(
@@ -15,6 +14,15 @@ export function Posts() {
   const [currentPage, setCurrentPage] = useState(1);
   const [selectedPost, setSelectedPost] = useState(null);
 
+  //   gives you access to the queryClient
+  const qClient = useQueryClient();
+
+  useEffect(() => {
+    const nextPage = currentPage < 10 ? currentPage + 1 : currentPage;
+    qClient.prefetchQuery(['posts', nextPage], () => fetchPosts(nextPage));
+    return () => {};
+  }, [currentPage, qClient]);
+
   const { data, isError, isLoading } = useQuery(
     ['posts', currentPage],
     () => fetchPosts(currentPage),
@@ -23,6 +31,7 @@ export function Posts() {
       // cacheTime is a period of time after which cache data is garbage
       // collected. you can use cached data to display while most relevant
       // data is fetching
+      keepPreviousData: true,
     }
   );
 
