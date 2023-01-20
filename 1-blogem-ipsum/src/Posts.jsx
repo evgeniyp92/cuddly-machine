@@ -18,6 +18,7 @@ export function Posts() {
   const qClient = useQueryClient();
 
   useEffect(() => {
+    // prefetching the next page
     const nextPage = currentPage < 10 ? currentPage + 1 : currentPage;
     qClient.prefetchQuery(['posts', nextPage], () => fetchPosts(nextPage));
     return () => {};
